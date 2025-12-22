@@ -1,7 +1,7 @@
 import torch
 from transformers import pipeline
 
-MODEL_PATH = "models/roberta_spam_classifier"
+MODEL_ID = "subhradip-nlp-labs/roberta-spam-classifier"
 
 @torch.inference_mode()
 def load_model():
@@ -9,9 +9,10 @@ def load_model():
 
     classifier = pipeline(
         "text-classification",
-        model=MODEL_PATH,
-        tokenizer=MODEL_PATH,
+        model=MODEL_ID,
+        tokenizer=MODEL_ID,
         device=device
     )
-
     return classifier
+
+
