@@ -1,6 +1,6 @@
-streamlit>=1.37.0
-torch==2.2.2
-transformers>=4.44.0
+streamlit
+torch
+transformers
 huggingface-hub
 safetensors
-tokenizers
+
