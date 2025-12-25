@@ -1,40 +1,41 @@
 import streamlit as st
-from utils import load_model
+from transformers import pipeline
 
 st.set_page_config(
-    page_title="Spam–Ham Classifier (RoBERTa)",
-    page_icon="📧",
+    page_title="Spam / Ham Classifier",
+    page_icon="📩",
     layout="centered"
 )
 
-st.title("📧 Spam–Ham Classifier (RoBERTa)")
-st.write(
-    "This app uses a **fine-tuned RoBERTa model** to classify messages as "
-    "**Spam** or **Ham (Not Spam)**."
-)
+st.title("📩 Spam / Ham Message Classifier")
+st.write("Fine-tuned **RoBERTa** model deployed using Streamlit")
 
 @st.cache_resource
-def get_classifier():
-    return load_model()
+def load_model():
+    return pipeline(
+        "text-classification",
+        model="subhradip-nlp-labs/roberta-spam-classifier"
+    )
 
-classifier = get_classifier()
-st.success("✅ Model loaded successfully")
+classifier = load_model()
 
-message = st.text_area(
-    "✉️ Enter your message",
-    height=150,
-    placeholder="Congratulations! You've won a free prize..."
+text = st.text_area(
+    "Enter message text",
+    height=120,
+    placeholder="Type SMS or email content here..."
 )
 
-if st.button("Classify"):
-    if not message.strip():
-        st.warning("⚠️ Please enter a message")
+if st.button("Predict"):
+    if text.strip() == "":
+        st.warning("Please enter some text.")
     else:
-        result = classifier(message, truncation=True, max_length=128)[0]
+        result = classifier(text)[0]
         label = result["label"]
         score = result["score"]
 
-        if label.endswith("1"):
-            st.error(f"🚫 **Spam Detected**\n\nConfidence: {score*100:.2f}%")
+        if label.endswith("1") or label.upper() == "SPAM":
+            st.error(f"🚫 SPAM ({score:.2%} confidence)")
         else:
-            st.success(f"✅ **Ham (Not Spam)**\n\nConfidence: {score*100:.2f}%")
+            st.success(f"✅ HAM ({score:.2%} confidence)")
+
+
